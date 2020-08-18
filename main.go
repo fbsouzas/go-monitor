@@ -7,13 +7,14 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"strconv"
 	"strings"
 	"time"
 )
 
 const monitories = 3
 const delay = 5
+const websitesFile = "websites.txt"
+const logFile = "log.txt"
 
 func main() {
 	showWelcomeMessage()
@@ -31,78 +32,75 @@ func main() {
 		case 0:
 			exitApp()
 		default:
-			fmt.Println("Comando não encontrado")
+			fmt.Println("Command not found.")
 		}
 	}
 }
 
 func showWelcomeMessage() {
-	name := "Fábio"
-	version := 0.1
-
-	fmt.Println("Olá, Sr(a)", name)
-	fmt.Println("Este programa está na versão", version)
+	fmt.Println("Welcome to Website Monitor")
 }
 
 func showMenu() {
-	fmt.Println("1 - Iniciar monitoramento")
-	fmt.Println("2 - Exigibir os logs")
-	fmt.Println("0 - Sair do programa")
+	fmt.Println("")
+	fmt.Println("Choose a command:")
+	fmt.Println("1 - Start monitoring")
+	fmt.Println("2 - View logs")
+	fmt.Println("0 - Exit")
 }
 
 func scanCommand() int {
 	var command int
 
 	fmt.Scan(&command)
-	fmt.Println("O comando escolhido foi:", command)
+	fmt.Println("The chosen command was:", command)
 
 	return command
 }
 
 func exitApp() {
-	fmt.Println("Saindo da aplicação")
+	fmt.Println("Exiting of the Website Monitor")
 
 	os.Exit(0)
 }
 
 func startMonitoring() {
-	fmt.Println("Iniciando monitoramento...")
+	fmt.Println("Starting monitoring...")
 
 	websites := readerFile()
 
 	for i := 0; i < monitories; i++ {
 		for _, website := range websites {
-			websiteTester(website)
+			websiteMonitors(website)
 		}
+
+		fmt.Println("")
 
 		time.Sleep(delay * time.Second)
 	}
 }
 
-func websiteTester(website string) {
+func websiteMonitors(website string) {
 	resp, err := http.Get(website)
-	message := "foi carregado com sucesso!"
 
 	if err != nil {
-		fmt.Println("Ocorreu um erro:", err)
+		fmt.Println(err)
 	}
 
-	if resp.StatusCode != 200 {
-		message = "está com problemas."
-	}
+	message := formatMessage(website, resp.Status, resp.StatusCode == 200)
 
-	writeLog(website, resp.StatusCode == 200)
+	writeLog(message)
 
-	fmt.Println("O site", website, message, "Status code:", resp.StatusCode)
+	fmt.Print(message)
 }
 
 func readerFile() []string {
 	var websites []string
 
-	file, err := os.Open("websites.txt")
+	file, err := os.Open(websitesFile)
 
 	if err != nil {
-		fmt.Println("Ocorreu um erro:", err)
+		fmt.Println(err)
 	}
 
 	reader := bufio.NewReader(file)
@@ -122,20 +120,37 @@ func readerFile() []string {
 	return websites
 }
 
-func writeLog(website string, status bool) {
-	file, err := os.OpenFile("log.txt", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+func formatMessage(website string, httpStatus string, status bool) string {
+	statusMessage := "RUNNING"
+
+	if !status {
+		statusMessage = "FAILURE"
+	}
+
+	return time.Now().Format("2006-01-02 15:04:05") +
+		" - " +
+		"[" + statusMessage + "]" +
+		"[" + website + "]: " +
+		httpStatus +
+		"\n"
+}
+
+func writeLog(message string) {
+	file, err := os.OpenFile(logFile, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	file.WriteString(time.Now().Format("2006-01-02 15:04:05") + " - " + website + " - online: " + strconv.FormatBool(status) + "\n")
+	file.WriteString(message)
 
 	file.Close()
 }
 
 func printLog() {
-	file, err := ioutil.ReadFile("log.txt")
+	fmt.Println("Viewing logs...")
+
+	file, err := ioutil.ReadFile(logFile)
 
 	if err != nil {
 		fmt.Println(err)
