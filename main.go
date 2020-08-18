@@ -67,7 +67,7 @@ func exitApp() {
 func startMonitoring() {
 	fmt.Println("Starting monitoring...")
 
-	websites := readerFile()
+	websites := readFile()
 
 	for i := 0; i < monitories; i++ {
 		for _, website := range websites {
@@ -94,7 +94,7 @@ func websiteMonitors(website string) {
 	fmt.Print(message)
 }
 
-func readerFile() []string {
+func readFile() []string {
 	var websites []string
 
 	file, err := os.Open(websitesFile)
