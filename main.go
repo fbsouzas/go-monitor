@@ -4,8 +4,10 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -25,7 +27,7 @@ func main() {
 		case 1:
 			startMonitoring()
 		case 2:
-			fmt.Println("Exigibindo logs")
+			printLog()
 		case 0:
 			exitApp()
 		default:
@@ -89,6 +91,8 @@ func websiteTester(website string) {
 		message = "está com problemas."
 	}
 
+	writeLog(website, resp.StatusCode == 200)
+
 	fmt.Println("O site", website, message, "Status code:", resp.StatusCode)
 }
 
@@ -116,4 +120,26 @@ func readerFile() []string {
 	file.Close()
 
 	return websites
+}
+
+func writeLog(website string, status bool) {
+	file, err := os.OpenFile("log.txt", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	file.WriteString(time.Now().Format("2006-01-02 15:04:05") + " - " + website + " - online: " + strconv.FormatBool(status) + "\n")
+
+	file.Close()
+}
+
+func printLog() {
+	file, err := ioutil.ReadFile("log.txt")
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(string(file))
 }
