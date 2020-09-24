@@ -11,9 +11,9 @@ import (
 	"time"
 )
 
-const monitories = 3
+const numberTimesToTest = 3
 const delay = 5
-const websitesFile = "websites.txt"
+const applicationsFile = "applications.txt"
 const logFile = "log.txt"
 
 func main() {
@@ -69,7 +69,7 @@ func startMonitoring() {
 
 	websites := readFile()
 
-	for i := 0; i < monitories; i++ {
+	for i := 0; i < numberTimesToTest; i++ {
 		for _, website := range websites {
 			websiteMonitors(website)
 		}
@@ -97,7 +97,7 @@ func websiteMonitors(website string) {
 func readFile() []string {
 	var websites []string
 
-	file, err := os.Open(websitesFile)
+	file, err := os.Open(applicationsFile)
 
 	if err != nil {
 		fmt.Println(err)
