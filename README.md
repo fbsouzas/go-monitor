@@ -24,8 +24,16 @@ cp applications.txt.sample applications.txt
 https://www.my-aplication-1.com/
 https://www.my-application2.com/
 ```
+5 - Opens the `main.go` and configure with your preferences
+```go
+# main.go
+const numberTimesToTest = 3 # Number of times that applications will be test
+const delay = 5 # Delay of each test
+const applicationsFile = "applications.txt" # Filename with the applications
+const logFile = "log.txt" # Log filename
+```
 
-5 - Run the **Go monitor**
+6 - Run the **Go monitor**
 ```sh
 go run main.go
 ```
