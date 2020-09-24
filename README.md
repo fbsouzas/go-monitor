@@ -2,9 +2,11 @@
 
 This CLI project monitors the health check of your applications and generates logs with information about your applications is running or not.
 
-## How to use
+## How it works
 
-![how to use](howtouse.gif)
+![how to use](how-it-works.gif)
+
+## How to use
 
 1 - Clone the project in your `src` dir.
 ```sh
@@ -16,17 +18,17 @@ git clone git@github.com:fbsouzas/go-monitor.git
 cd go-monitor
 ```
 
-3 - Create file with the applications for monitors.
+3 - Create the file with the applications to monitor.
 ```sh
 cp applications.txt.sample applications.txt
 ```
 
-4 - Puts your applications in the `applications.txt` file. Example:
+4 - Put your applications in the `applications.txt` file. Example:
 ```sh
 https://www.my-aplication-1.com/
 https://www.my-application2.com/
 ```
-5 - Opens the `main.go` and configure with your preferences
+5 - Open the `main.go` and configure with your preferences.
 ```go
 # main.go
 const numberTimesToTest = 3 # Number of times that applications will be test
@@ -42,5 +44,5 @@ go run main.go
 
 ## Goal
 
-This project was created for studing and have the first contact with Golang and learn more about this programming language.
+This project was created for studying and have the first contact with Golang and learn more about this programming language.
 
