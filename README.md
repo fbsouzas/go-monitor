@@ -2,7 +2,9 @@
 
 This CLI project monitors the health check of your applications and generates logs with information about your applications is running or not.
 
-## How it works
+## How to use
+
+![how to use](howtouse.gif)
 
 1 - Clone the project in your `src` dir.
 ```sh
@@ -37,8 +39,6 @@ const logFile = "log.txt" # Log filename
 ```sh
 go run main.go
 ```
-
-## Preview
 
 ## Goal
 
