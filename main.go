@@ -38,7 +38,7 @@ func main() {
 }
 
 func showWelcomeMessage() {
-	fmt.Println("Welcome to Website Monitor")
+	fmt.Println("Welcome to Go Monitor")
 }
 
 func showMenu() {
@@ -50,7 +50,7 @@ func showMenu() {
 }
 
 func scanCommand() int {
-	var command int
+	command := -1
 
 	fmt.Scan(&command)
 	fmt.Println("The chosen command was:", command)
@@ -59,7 +59,7 @@ func scanCommand() int {
 }
 
 func exitApp() {
-	fmt.Println("Exiting of the Website Monitor")
+	fmt.Println("Exiting of the Go Monitor")
 
 	os.Exit(0)
 }
@@ -67,11 +67,11 @@ func exitApp() {
 func startMonitoring() {
 	fmt.Println("Starting monitoring...")
 
-	websites := readFile()
+	apps := readAppsFile()
 
 	for i := 0; i < numberTimesToTest; i++ {
-		for _, website := range websites {
-			websiteMonitors(website)
+		for _, app := range apps {
+			check(app)
 		}
 
 		fmt.Println("")
@@ -80,22 +80,22 @@ func startMonitoring() {
 	}
 }
 
-func websiteMonitors(website string) {
-	resp, err := http.Get(website)
+func check(app string) {
+	resp, err := http.Get(app)
 
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	message := formatMessage(website, resp.Status, resp.StatusCode == 200)
+	message := formatLogMessage(app, resp.Status, resp.StatusCode == 200)
 
 	writeLog(message)
 
 	fmt.Print(message)
 }
 
-func readFile() []string {
-	var websites []string
+func readAppsFile() []string {
+	var apps []string
 
 	file, err := os.Open(applicationsFile)
 
@@ -108,7 +108,7 @@ func readFile() []string {
 	for {
 		line, err := reader.ReadString('\n')
 		line = strings.TrimSpace(line)
-		websites = append(websites, line)
+		apps = append(apps, line)
 
 		if err == io.EOF {
 			break
@@ -117,10 +117,10 @@ func readFile() []string {
 
 	file.Close()
 
-	return websites
+	return apps
 }
 
-func formatMessage(website string, httpStatus string, status bool) string {
+func formatLogMessage(app string, httpStatus string, status bool) string {
 	statusMessage := "RUNNING"
 
 	if !status {
@@ -130,7 +130,7 @@ func formatMessage(website string, httpStatus string, status bool) string {
 	return time.Now().Format("2006-01-02 15:04:05") +
 		" - " +
 		"[" + statusMessage + "]" +
-		"[" + website + "]: " +
+		"[" + app + "]: " +
 		httpStatus +
 		"\n"
 }
